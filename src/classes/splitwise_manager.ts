@@ -1,7 +1,7 @@
-import { env } from "./env";
-import { UserAlreadyExistsError, UserNotFoundError } from "./errors/member.errors";
-import type { Member } from "./generated/prisma/client"
-import { prisma } from "./prisma";
+import { env } from "../env";
+import { UserAlreadyExistsError, UserNotFoundError } from "../errors/member.errors";
+import type { Member } from "../generated/prisma/client"
+import { prisma } from "../prisma";
 import jwt from 'jsonwebtoken'
 
 interface MemberRepository {
@@ -62,6 +62,9 @@ export class SplitwiseManager {
     }
 }
 
+export class Group{
+    
+}
 
 
 

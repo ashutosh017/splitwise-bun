@@ -1,6 +1,6 @@
 import express from 'express';
 import { SigninSchema, SignupSchema } from './zod';
-import { PrismaMemberRepository, SplitwiseManager } from './splitwise_manager';
+import { PrismaMemberRepository, SplitwiseManager } from './classes/splitwise_manager';
 import { AppErr } from './errors/app_error';
 
 export const app = express();

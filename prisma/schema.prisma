@@ -19,4 +19,30 @@ model Member {
   email       String   @unique
   password    String
   dateCreated DateTime @default(now())
+  group       Group    @relation(fields: [groupId], references: [id])
+  groupId     String
+}
+
+model Group {
+  id       String    @unique @default(uuid())
+  members  Member[]
+  expenses Expense[]
+}
+
+model Expense {
+  id      String @unique @default(uuid())
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+}
+
+model Split {
+  id   String    @unique @default(uuid())
+  type SplitType
+}
+
+enum SplitType {
+  EQUAL
+  PERCENTAGE
+  SHARE
+  AMOUNT
 }
