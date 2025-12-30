@@ -2,7 +2,6 @@ import { prisma } from "../prisma";
 import type { SigninData, SignupData } from "../types/auth";
 import type { Member, MemberRepository } from "../types/member";
 import type { Member as PrismaMember } from '../generated/prisma/client'
-import { UserNotFoundError } from "../errors/member.errors";
 
 export class PrismaMemberRepository implements MemberRepository {
     async create(data: SignupData): Promise<Member> {

@@ -1,8 +1,8 @@
 import { env } from "../env";
-import { UserAlreadyExistsError, UserNotFoundError } from "../errors/member.errors";
 import jwt from 'jsonwebtoken'
 import type { SigninData, SignupData } from "../types/auth";
 import type { MemberRepository } from "../types/member";
+import { UserAlreadyExistsError, UserNotFoundError } from "../errors/auth.errors";
 
 export class AuthService {
     constructor(private members: MemberRepository) { }

@@ -1,17 +1,16 @@
-import { prisma } from "../prisma";
-import type { PrismaMemberRepository } from "../repos/prisma.member.repo";
-import type { } from "./auth.service";
+import type { CreateGroupInput, GroupRepository, GroupSummary } from "../types/group";
+import type { MemberRepository } from "../types/member";
 
-export class PrismaGroupRepository {
-    constructor() { }
-}
 
 export class GroupService {
     constructor(
-        members: PrismaMemberRepository,
-        group: PrismaGroupRepository
-    ) { }
-    async create(name: string) {
-        // await prisma.
+        private readonly members: MemberRepository,
+        private readonly group: GroupRepository
+    ) {
     }
+    async createGroup(input: CreateGroupInput): Promise<GroupSummary> {
+        const group = await this.group.create(input);
+        return group;
+    }
+
 }
