@@ -19,25 +19,55 @@ model Member {
   email       String   @unique
   password    String
   dateCreated DateTime @default(now())
-  group       Group    @relation(fields: [groupId], references: [id])
-  groupId     String
+
+  groups   GroupMember[]
+  expenses Expense[]     @relation("PaidBy")
+  splits   Split[]
 }
 
 model Group {
-  id       String    @unique @default(uuid())
-  members  Member[]
+  id          String  @unique @default(uuid())
+  name        String
+  description String?
+
   expenses Expense[]
+  members  GroupMember[]
 }
 
-model Expense {
-  id      String @unique @default(uuid())
+model GroupMember {
+  id String @unique @default(uuid())
+
+  member   Member @relation(fields: [memberId], references: [id])
+  memberId String
+
   group   Group  @relation(fields: [groupId], references: [id])
   groupId String
 }
 
+model Expense {
+  id          String  @unique @default(uuid())
+  description String?
+  amount      Int
+
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+
+  whoPaid   Member @relation("PaidBy", fields: [whoPaidId], references: [id])
+  whoPaidId String
+
+  splits Split[]
+}
+
 model Split {
-  id   String    @unique @default(uuid())
-  type SplitType
+  id    String    @unique @default(uuid())
+  type  SplitType
+  value Decimal
+
+  expense   Expense @relation(fields: [expenseId], references: [id])
+  expenseId String
+
+  member   Member @relation(fields: [memberId], references: [id])
+  memberId String
 }
 
 enum SplitType {
