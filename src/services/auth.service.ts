@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import type { SigninData, SignupData } from "../types/auth";
 import type { MemberRepository } from "../types/member";
 
-export class SplitwiseManager {
+export class AuthService {
     constructor(private members: MemberRepository) { }
     async signup(data: SignupData): Promise<void> {
         const existing = await this.members.findByEmail(data.email);
@@ -13,7 +13,7 @@ export class SplitwiseManager {
 
     }
     async signin(data: SigninData): Promise<{ token: string }> {
-        const user = await this.members.findByCredentials(data);
+        const user = await this.members.findByEmail(data.email);
         if (!user) {
             throw UserNotFoundError;
         }

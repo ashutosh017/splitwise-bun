@@ -1,26 +1,26 @@
 import express from 'express';
 import { SigninSchema, SignupSchema } from './zod';
-import { SplitwiseManager } from './services/splitwiseManger';
+import { AuthService } from './services/auth.service';
 import { AppError } from './errors/app_error';
 import { PrismaMemberRepository } from './repos/prisma.member.repo';
+import z from 'zod';
 
 export const app = express();
 app.use(express.json());
 
 const repo = new PrismaMemberRepository();
-const manager = new SplitwiseManager(repo)
+const authService = new AuthService(repo)
 
 app.post("api/v1/signup", async (req, res) => {
-    const body = await req.body;
-    const parsedBody = SignupSchema.safeParse(body);
+    const parsedBody = SignupSchema.safeParse(req.body);
     if (parsedBody.error) {
-        res.status(403).json({
-            error: parsedBody.error
+        res.status(400).json({
+            error: z.treeifyError(parsedBody.error)
         })
         return;
     }
     try {
-        const user = await manager.signup(parsedBody.data);
+        const user = await authService.signup(parsedBody.data);
         res.status(200).json(user)
     } catch (error) {
         if (error instanceof AppError) {
@@ -44,7 +44,7 @@ app.post("/api/v1/signin", async (req, res) => {
         return;
     }
     try {
-        const token = await manager.signin(parsedBody.data);
+        const token = await authService.signin(parsedBody.data);
         res.status(200).json({
             message: "signin successful",
             token

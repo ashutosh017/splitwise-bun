@@ -5,9 +5,6 @@ import type { Member as PrismaMember } from '../generated/prisma/client'
 import { UserNotFoundError } from "../errors/member.errors";
 
 export class PrismaMemberRepository implements MemberRepository {
-    findByCredentials(data: SigninData): Promise<Member | null> {
-        throw new Error("Method not implemented.");
-    }
     async create(data: SignupData): Promise<Member> {
         const user = await prisma.member.create({
             data

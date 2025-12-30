@@ -1,6 +1,6 @@
 import { prisma } from "../prisma";
 import type { PrismaMemberRepository } from "../repos/prisma.member.repo";
-import type { } from "./splitwiseManger";
+import type { } from "./auth.service";
 
 export class PrismaGroupRepository {
     constructor() { }
