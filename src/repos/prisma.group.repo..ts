@@ -15,6 +15,30 @@ export class PrismaGroupRepository implements GroupRepository {
             name: group.name,
             description: group.description
         }
-
+    }
+    async findById(groupId: string): Promise<GroupSummary | null> {
+        const group = await prisma.group.findUnique({
+            where: {
+                id: groupId
+            }
+        })
+        if (!group) return null;
+        return this.toSummary(group);
+    }
+    async addMember(groupId: string, memberId: string): Promise<void> {
+        await prisma.groupMember.create({
+            data: {
+                group: {
+                    connect: {
+                        id: groupId
+                    }
+                }
+                , member: {
+                    connect: {
+                        id: memberId
+                    }
+                }
+            }
+        })
     }
 }

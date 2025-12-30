@@ -3,6 +3,9 @@ import type { Member } from "./member";
 
 export interface GroupRepository {
     create(data: CreateGroupInput): Promise<GroupSummary>
+    addMember(groupId: string, memberId: string): Promise<void>
+    findById(groupId: string): Promise<GroupSummary | null>
+
 }
 export interface CreateGroupInput {
     name: string;
