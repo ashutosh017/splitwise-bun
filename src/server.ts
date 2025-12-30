@@ -1,7 +1,7 @@
 import express from 'express';
 import { SigninSchema, SignupSchema } from './zod';
 import { SplitwiseManager } from './services/splitwiseManger';
-import { AppErr } from './errors/app_error';
+import { AppError } from './errors/app_error';
 import { PrismaMemberRepository } from './repos/prisma.member.repo';
 
 export const app = express();
@@ -23,7 +23,7 @@ app.post("api/v1/signup", async (req, res) => {
         const user = await manager.signup(parsedBody.data);
         res.status(200).json(user)
     } catch (error) {
-        if (error instanceof AppErr) {
+        if (error instanceof AppError) {
             res.status(error.status).json({ message: error.message });
             return;
         }
@@ -51,7 +51,7 @@ app.post("/api/v1/signin", async (req, res) => {
         })
 
     } catch (error) {
-        if (error instanceof AppErr) {
+        if (error instanceof AppError) {
             res.status(error.status).json({
                 message: error.message
             })

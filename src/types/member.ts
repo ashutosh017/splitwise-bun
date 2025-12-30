@@ -10,5 +10,4 @@ export interface Member {
 export interface MemberRepository {
     create(data: SignupData): Promise<Member>
     findByEmail(email: string): Promise<Member | null>
-    findByCredentials(data: SigninData): Promise<Member | null>
 }

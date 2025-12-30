@@ -1,19 +1,18 @@
 import { prisma } from "../prisma";
 import type { SigninData, SignupData } from "../types/auth";
 import type { Member, MemberRepository } from "../types/member";
+import type { Member as PrismaMember } from '../generated/prisma/client'
+import { UserNotFoundError } from "../errors/member.errors";
 
 export class PrismaMemberRepository implements MemberRepository {
+    findByCredentials(data: SigninData): Promise<Member | null> {
+        throw new Error("Method not implemented.");
+    }
     async create(data: SignupData): Promise<Member> {
         const user = await prisma.member.create({
             data
         })
-        return user;
-    }
-    async findByCredentials(data: SigninData): Promise<Member | null> {
-        const user = await prisma.member.findUnique({
-            where: data
-        })
-        return user;
+        return this.toDomain(user);
     }
     async findByEmail(email: string): Promise<Member | null> {
         const user = await prisma.member.findUnique({
@@ -21,6 +20,14 @@ export class PrismaMemberRepository implements MemberRepository {
                 email
             }
         })
-        return user;
+        return user ? this.toDomain(user) : null
+    }
+    private toDomain(member: PrismaMember): Member {
+        return {
+            id: member.id,
+            name: member.name,
+            password: member.password,
+            email: member.email
+        }
     }
 }
