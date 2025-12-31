@@ -23,6 +23,8 @@ model Member {
   groups   GroupMember[]
   expenses Expense[]     @relation("PaidBy")
   splits   Split[]
+
+  @@map("members")
 }
 
 model Group {
@@ -32,16 +34,21 @@ model Group {
 
   expenses Expense[]
   members  GroupMember[]
+
+  @@map("groups")
 }
 
 model GroupMember {
   id String @unique @default(uuid())
 
-  member   Member @relation(fields: [memberId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
   memberId String
 
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String
+
+  @@unique([groupId, memberId])
+  @@map("group_members")
 }
 
 model Expense {
@@ -49,13 +56,15 @@ model Expense {
   description String?
   amount      Int
 
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String
 
   whoPaid   Member @relation("PaidBy", fields: [whoPaidId], references: [id])
   whoPaidId String
 
   splits Split[]
+
+  @@map("expenses")
 }
 
 model Split {
@@ -63,11 +72,13 @@ model Split {
   type  SplitType
   value Decimal
 
-  expense   Expense @relation(fields: [expenseId], references: [id])
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
   expenseId String
 
   member   Member @relation(fields: [memberId], references: [id])
   memberId String
+
+  @@map("splits")
 }
 
 enum SplitType {
