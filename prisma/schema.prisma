@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Member {
-  id          String   @unique @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   email       String   @unique
   password    String
@@ -23,23 +23,26 @@ model Member {
   groups   GroupMember[]
   expenses Expense[]     @relation("PaidBy")
   splits   Split[]
+  owned    Balance[]     @relation("Owned")
+  owed     Balance[]     @relation("Owed")
 
   @@map("members")
 }
 
 model Group {
-  id          String  @unique @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
 
   expenses Expense[]
   members  GroupMember[]
+  balances Balance[]
 
   @@map("groups")
 }
 
 model GroupMember {
-  id String @unique @default(uuid())
+  id String @id @default(uuid())
 
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
   memberId String
@@ -52,9 +55,9 @@ model GroupMember {
 }
 
 model Expense {
-  id          String  @unique @default(uuid())
+  id          String  @id @default(uuid())
   description String?
-  amount      Int
+  amount      Decimal
 
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String
@@ -68,7 +71,7 @@ model Expense {
 }
 
 model Split {
-  id    String    @unique @default(uuid())
+  id    String    @id @default(uuid())
   type  SplitType
   value Decimal
 
@@ -78,7 +81,25 @@ model Split {
   member   Member @relation(fields: [memberId], references: [id])
   memberId String
 
+  @@unique([memberId, expenseId])
   @@map("splits")
+}
+
+model Balance {
+  id     String  @id @default(uuid())
+  amount Decimal
+
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId String
+
+  from         Member @relation("Owed", fields: [fromMemberId], references: [id])
+  fromMemberId String
+
+  to         Member @relation("Owned", fields: [toMemberId], references: [id])
+  toMemberId String
+
+  @@unique([groupId, fromMemberId, toMemberId])
+  @@map("balances")
 }
 
 enum SplitType {
