@@ -43,3 +43,13 @@ export class MemberNotInGroupError extends AppError {
         );
     }
 }
+
+export class ExpenseNotFoundError extends AppError {
+    constructor() {
+        super(
+            "EXPENSE_NOT_FOUND",
+            404,
+            "Expense details not found"
+        )
+    }
+}
