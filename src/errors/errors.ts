@@ -53,3 +53,31 @@ export class ExpenseNotFoundError extends AppError {
         )
     }
 }
+export class BalanceNotFoundError extends AppError {
+    constructor() {
+        super(
+            "BALANCE_NOT_FOUND",
+            404,
+            "Balance details not found"
+        )
+    }
+}
+
+export class InvalidAmountError extends AppError {
+    constructor() {
+        super(
+            "INVALID_AMOUNT",
+            400,
+            "Amount must be greater than zero"
+        );
+    }
+}
+export class InsufficientBalanceError extends AppError {
+    constructor() {
+        super(
+            "INSUFFICIENT_BALANCE",
+            409,
+            "Insufficient balance to perform this operation"
+        );
+    }
+}

@@ -10,7 +10,6 @@ export class AuthService {
         const existing = await this.members.findByEmail(data.email);
         if (existing) throw new MemberAlreadyExistsError();
         await this.members.create(data);
-
     }
     async signin(data: SigninData): Promise<{ token: string }> {
         const user = await this.members.findByEmail(data.email);
