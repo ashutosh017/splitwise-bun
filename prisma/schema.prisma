@@ -65,14 +65,14 @@ model Expense {
   whoPaid   Member @relation("PaidBy", fields: [whoPaidId], references: [id])
   whoPaidId String
 
-  splits Split[]
+  splitType SplitType
+  splits    Split[]
 
   @@map("expenses")
 }
 
 model Split {
-  id    String    @id @default(uuid())
-  type  SplitType
+  id    String  @id @default(uuid())
   value Decimal
 
   expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)

@@ -19,5 +19,6 @@ export const groupService = new GroupService(memberRepo, groupRepo);
 export const expenseService = new ExpenseService(
     groupRepo,
     expenseRepo,
+    memberRepo
 );
 export const balanceService = new BalanceService(balanceRepo, groupRepo);

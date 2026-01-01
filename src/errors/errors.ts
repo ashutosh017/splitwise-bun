@@ -81,3 +81,48 @@ export class InsufficientBalanceError extends AppError {
         );
     }
 }
+export class DuplicateMembersInSplitsArrayError extends AppError {
+    constructor() {
+        super(
+            "DUPLICATE_MEMBER_IDS_FOUND",
+            409,
+            "Duplicate Ids found in Splits Array"
+        );
+    }
+}
+export class EmptySplitsArrayError extends AppError {
+    constructor() {
+        super(
+            "EMPTY_SPLITS_ARRAY",
+            409,
+            "Splits array cannot be empty"
+        );
+    }
+} export class InvalidSplitValueError extends AppError {
+    constructor() {
+        super(
+            "INVALID_SPLIT_VALUE",
+            400,
+            "Invalid split value provided"
+        );
+    }
+}
+export class SplitAmountMismatchError extends AppError {
+    constructor() {
+        super(
+            "SPLIT_AMOUNT_MISMATCH",
+            400,
+            "Split amounts do not add up to the total expense amount"
+        );
+    }
+}
+export class PercentageSplitNotEqualTo100Error extends AppError {
+    constructor() {
+        super(
+            "PERCENTAGE_SPLIT_NOT_100",
+            400,
+            "Percentage splits must add up to 100%"
+        );
+    }
+}
+

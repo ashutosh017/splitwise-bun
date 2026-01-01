@@ -39,5 +39,8 @@ export class BalanceService {
         const balances = await this.balanceRepo.listByGroup(groupId);
         return balances;
     }
+    async settleUp() {
+
+    }
 
 }

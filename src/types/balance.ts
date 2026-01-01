@@ -7,7 +7,6 @@ export interface CreateBalanceInput {
 }
 
 export interface BalanceRepository {
-
     find(
         groupId: string,
         fromMemberId: string,
@@ -37,6 +36,7 @@ export interface BalanceRepository {
     ): Promise<void>
 
     listByGroup(groupId: string): Promise<BalanceSummary[]>
+    // settleUp(groupId:string, )
 }
 
 export interface BalanceSummary {

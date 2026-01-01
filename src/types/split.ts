@@ -1,12 +1,20 @@
-import type { Expense } from "./expense";
-import type { Member } from "./member";
+import type { Prisma } from "../generated/prisma/client";
 
 export interface Split {
     id: string;
-    type: SplitType;
     value: number;
-    expense: Expense;
-    member: Member;
+    expenseId: string;
+    memberId: string;
+}
+
+export interface SplitInput {
+    value: number;
+    memberId: string;
+}
+
+export interface SplitRepository {
+    create(input: SplitInput, tx?: Prisma.TransactionClient): Promise<void>
+    // createMany()
 }
 
 export type SplitType = 'AMOUNT' | 'SHARE' | 'PERCENTAGE' | 'EQUAL'

@@ -1,12 +1,14 @@
 import { prisma } from "../prisma";
-import type { CreateExpenseInput, ExpenseRepository, ExpenseSummary, UpdateExpenseInput } from "../types/expense";
-import type { Expense as PrismaExpense } from '../generated/prisma/client'
+import type { CreateExpenseRepoInput, ExpenseRepository, ExpenseSummary, UpdateExpenseInput } from "../types/expense";
+import type { Prisma, Expense as PrismaExpense } from '../generated/prisma/client'
 
 export class PrismaExpenseRepository implements ExpenseRepository {
-    async create(input: CreateExpenseInput): Promise<ExpenseSummary> {
-        const expense = await prisma.expense.create({
+    async create(input: CreateExpenseRepoInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary> {
+        const client = tx ? tx : prisma;
+        const expense = await client.expense.create({
             data: {
                 amount: input.amount,
+                splitType: input.splitType,
                 whoPaid: {
                     connect: {
                         id: input.whoPaidId

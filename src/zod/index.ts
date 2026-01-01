@@ -1,5 +1,5 @@
 import { string, z } from "zod";
-import { maxError, minError, stringError } from "./errors";
+import { maxError, minError, stringError } from "./zod_errors";
 
 
 export const SigninSchema = z.object({
