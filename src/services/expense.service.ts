@@ -4,41 +4,40 @@ import type { CreateExpenseInput, ExpenseRepository, ExpenseSummary, UpdateExpen
 import type { GroupRepository } from "../types/group";
 import type { MemberRepository } from "../types/member";
 import type { SplitInput, SplitRepository, SplitType } from "../types/split";
+import type { BalanceService } from "./balance.service";
+import type { GroupService } from "./group.service";
 
 export class ExpenseService {
     constructor(
-        private readonly groupRepo: GroupRepository,
-        private readonly expenseRepo: ExpenseRepository
-        , private readonly memberRepo: MemberRepository,
-        private readonly splitRepo: SplitRepository
+        private readonly expenseRepo: ExpenseRepository,
+        private readonly groupService: GroupService,
+        private readonly splitRepo: SplitRepository,
+        private readonly balanceService: BalanceService,
+
     ) { }
-    async create(input: CreateExpenseInput,): Promise<ExpenseSummary> {
+    async create(input: CreateExpenseInput): Promise<ExpenseSummary> {
         await this.validateExpense(input)
-        let total = 0;
-        const map = this.normalizeSplits(input.splitType, total, input.splits);
+        const map = this.normalizeSplits(input.splitType, input.amount, input.splits);
         return prisma.$transaction(async (tx) => {
             const expense = await this.expenseRepo.create({
                 amount: input.amount,
                 description: input.description,
                 whoPaidId: input.whoPaidId,
-                groupId: input.groupId, splitType: input.splitType, splits: input.splits
+                groupId: input.groupId, splitType: input.splitType,
             }, tx)
-            // 2️⃣ Create splits
             await this.splitRepo.createMany(
-                expense.id,
-                normalizedSplits,
+                {
+                    expenseId: expense.id,
+                    normalizedSplits: map,
+                },
                 tx
             );
-
-            // 3️⃣ Update balances
             await this.balanceService.applyExpense(
                 expense,
-                normalizedSplits,
-                tx
+                map, tx
             );
 
             return expense;
-
         })
     }
 
@@ -104,19 +103,13 @@ export class ExpenseService {
 
     private async validateExpense(input: CreateExpenseInput): Promise<void> {
         const { amount, whoPaidId, groupId } = input
-        if (amount < 0) throw new InvalidAmountError();
+        if (amount <= 0) throw new InvalidAmountError();
         if (input.splits.length === 0) throw new EmptySplitsArrayError()
-        const member = await this.memberRepo.findById(whoPaidId);
-        if (!member) throw new MemberNotFoundError();
-        const group = await this.groupRepo.findById(groupId);
-        if (!group) throw new GroupNotFoundError();
-        for (const split of input.splits) {
-            const isMember = await this.groupRepo.hasMember(groupId, split.memberId);
-            if (!isMember) {
-                throw new MemberNotInGroupError();
-            }
-        }
         if (this.hasDuplicates(input.splits)) throw new DuplicateMembersInSplitsArrayError()
+        await this.groupService.ensureMemberAndGroupExist(groupId, whoPaidId);
+        for (const split of input.splits) {
+            await this.groupService.assertMemberInGroup(groupId, split.memberId);
+        }
 
     }
     private hasDuplicates<T>(arr: T[]): boolean {
@@ -137,8 +130,13 @@ export class ExpenseService {
         return expenses;
     }
     async delete(expenseId: string): Promise<void> {
-        await this.findById(expenseId);
-        await this.expenseRepo.delete(expenseId);
+        const expense = await this.findById(expenseId);
+        return prisma.$transaction(async (tx) => {
+            const splits = await this.splitRepo.findByExpenseId(expenseId, tx);
+            await this.balanceService.reverseExpense(expense, splits, tx)
+            await this.splitRepo.deleteByExpenseId(expenseId, tx);
+            await this.expenseRepo.delete(expenseId, tx)
+        })
     }
     async update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
         await this.findById(expenseId);

@@ -1,3 +1,4 @@
+import type { Prisma } from "../generated/prisma/client"
 
 export interface CreateBalanceInput {
     amount: number,
@@ -13,7 +14,7 @@ export interface BalanceRepository {
         toMemberId: string
     ): Promise<BalanceSummary | null>
 
-    upsert(input: CreateBalanceInput): Promise<BalanceSummary>
+    upsert(input: CreateBalanceInput, tx?: Prisma.TransactionClient): Promise<BalanceSummary>
 
     increment(
         groupId: string,
@@ -26,7 +27,8 @@ export interface BalanceRepository {
         groupId: string,
         fromMemberId: string,
         toMemberId: string,
-        amount: number
+        amount: number,
+        tx?: Prisma.TransactionClient
     ): Promise<BalanceSummary>
 
     delete(
@@ -36,7 +38,8 @@ export interface BalanceRepository {
     ): Promise<void>
 
     listByGroup(groupId: string): Promise<BalanceSummary[]>
-    // settleUp(groupId:string, )
+
+
 }
 
 export interface BalanceSummary {

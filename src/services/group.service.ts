@@ -13,6 +13,12 @@ export class GroupService {
         return group;
     }
 
+    async assertMemberInGroup(groupId: string, memberId: string): Promise<void> {
+        await this.ensureMemberAndGroupExist(groupId, memberId);
+        const isMember = await this.groupRepo.hasMember(groupId, memberId)
+        if (!isMember) throw new MemberNotInGroupError();
+    }
+
     async ensureMemberAndGroupExist(groupId: string, memberId: string): Promise<void> {
         const [group, member] = await Promise.all(
             [

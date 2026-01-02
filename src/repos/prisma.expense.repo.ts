@@ -40,8 +40,9 @@ export class PrismaExpenseRepository implements ExpenseRepository {
         })
         return expenses.map((e) => this.toSummary(e))
     }
-    async delete(expenseId: string): Promise<void> {
-        await prisma.expense.delete({
+    async delete(expenseId: string, tx?: Prisma.TransactionClient): Promise<void> {
+        const client = tx ?? prisma;
+        await client.expense.delete({
             where: {
                 id: expenseId
             }

@@ -1,6 +1,10 @@
 import { BalanceNotFoundError, GroupNotFoundError, InsufficientBalanceError, InvalidAmountError } from "../errors/errors";
+import type { Prisma } from "../generated/prisma/client";
+import { prisma } from "../prisma";
 import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
+import type { CreateExpenseInput, ExpenseSummary } from "../types/expense";
 import type { GroupRepository } from "../types/group";
+import type { SplitInput } from "../types/split";
 
 export class BalanceService {
     constructor(
@@ -41,6 +45,27 @@ export class BalanceService {
     }
     async settleUp() {
 
+    }
+    async applyExpense(expense: ExpenseSummary, normalizedSplits: Map<string, number>, tx?: Prisma.TransactionClient): Promise<void> {
+        const client = tx ?? prisma;
+        for (const [memberId, amount] of normalizedSplits.entries()) {
+            if (memberId === expense.whoPaidId) continue;
+            if (amount <= 0) continue;
+            await this.balanceRepo.upsert({
+                groupId: expense.groupId,
+                amount,
+                fromMemberId: expense.whoPaidId,
+                toMemberId: memberId
+            }, client)
+        }
+    }
+
+    async reverseExpense(expense: ExpenseSummary, splits: SplitInput[], tx?: Prisma.TransactionClient): Promise<void> {
+        const client = tx ?? prisma;
+        for (const split of splits) {
+            if (split.memberId === expense.whoPaidId) continue;
+            await this.balanceRepo.decrement(expense.groupId, split.memberId, expense.whoPaidId, split.value, tx)
+        }
     }
 
 }

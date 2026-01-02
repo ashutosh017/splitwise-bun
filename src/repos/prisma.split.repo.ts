@@ -1,8 +1,45 @@
+import type { Prisma } from "../generated/prisma/client";
 import type { TransactionClient } from "../generated/prisma/internal/prismaNamespace";
-import type { SplitInput, SplitRepository } from "../types/split";
+import { prisma } from "../prisma";
+import type { CreateManySplitInput, SplitRepository, SplitSummary } from "../types/split";
+import type { Split as PrismaSplit } from '../generated/prisma/client'
 
 export class PrismaSplitRepository implements SplitRepository {
-    async create(input: SplitInput, tx?: TransactionClient): Promise<void> {
-
+    async createMany(input: CreateManySplitInput, tx?: TransactionClient): Promise<void> {
+        const client = tx ? tx : prisma;
+        await client.split.createMany({
+            data: Array.from(input.normalizedSplits.entries()).map(([memberId, amount]) => (
+                {
+                    expenseId: input.expenseId,
+                    memberId,
+                    value: amount
+                }
+            ))
+        })
     }
+    async findByExpenseId(expenseId: string, tx?: Prisma.TransactionClient): Promise<SplitSummary[]> {
+        const client = tx ?? prisma;
+        const splits = await client.split.findMany({
+            where: {
+                expenseId
+            }
+        })
+        return splits.map((s) => this.toSummary(s))
+    }
+    async deleteByExpenseId(expenseId: string, tx?: Prisma.TransactionClient): Promise<void> {
+        const client = tx ?? prisma;
+        await client.split.deleteMany({
+            where: {
+                expenseId
+            }
+        })
+    }
+    private toSummary(split: PrismaSplit): SplitSummary {
+        return {
+            value: Number(split.value),
+            memberId: split.memberId
+
+        }
+    }
+
 }

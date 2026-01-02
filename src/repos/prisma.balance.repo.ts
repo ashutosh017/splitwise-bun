@@ -1,9 +1,9 @@
 import { prisma } from "../prisma";
 import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
-import type { Balance as PrismaBalance } from '../generated/prisma/client'
+import type { Prisma, Balance as PrismaBalance } from '../generated/prisma/client'
 
 export class PrismaBalanceRepository implements BalanceRepository {
-    async upsert(input: CreateBalanceInput): Promise<BalanceSummary> {
+    async upsert(input: CreateBalanceInput, tx?: Prisma.TransactionClient): Promise<BalanceSummary> {
         const balance = await prisma.balance.upsert({
             where: {
                 groupId_fromMemberId_toMemberId: {
