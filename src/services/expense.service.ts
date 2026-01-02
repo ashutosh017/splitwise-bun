@@ -1,9 +1,7 @@
-import { DuplicateMembersInSplitsArrayError, EmptySplitsArrayError, ExpenseNotFoundError, GroupNotFoundError, InvalidAmountError, InvalidSplitValueError, MemberNotFoundError, MemberNotInGroupError, PercentageSplitNotEqualTo100Error, SplitAmountMismatchError } from "../errors/errors";
+import { DuplicateMembersInSplitsArrayError, EmptySplitsArrayError, ExpenseNotFoundError, InvalidAmountError, InvalidSplitValueError, PercentageSplitNotEqualTo100Error, SplitAmountMismatchError } from "../errors/errors";
 import { prisma } from "../prisma";
 import type { CreateExpenseInput, ExpenseRepository, ExpenseSummary, UpdateExpenseInput } from "../types/expense";
-import type { GroupRepository } from "../types/group";
-import type { MemberRepository } from "../types/member";
-import type { SplitInput, SplitRepository, SplitType } from "../types/split";
+import type { SplitRepository, SplitSummary, SplitType } from "../types/split";
 import type { BalanceService } from "./balance.service";
 import type { GroupService } from "./group.service";
 
@@ -45,7 +43,7 @@ export class ExpenseService {
     private normalizeSplits(
         type: SplitType,
         total: number,
-        splits: SplitInput[]
+        splits: SplitSummary[]
     ): Map<string, number> {
 
         const result = new Map<string, number>();
@@ -139,9 +137,35 @@ export class ExpenseService {
         })
     }
     async update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
-        await this.findById(expenseId);
-        const expense = await this.expenseRepo.update(expenseId, updateInput);
-        return expense;
+        const oldExpense = await this.findById(expenseId);
+        const splits = await this.splitRepo.findByExpenseId(expenseId)
+        await this.validateExpense({
+            ...oldExpense,
+            splits
+        })
+        const normalizedSplits = this.normalizeSplits(updateInput.splitType, updateInput.amount!, splits)
+        return prisma.$transaction(async (tx) => {
+            const oldSplits = await this.splitRepo.findByExpenseId(expenseId, tx);
+            await this.balanceService.reverseExpense(oldExpense, splits, tx);
+            await this.splitRepo.deleteByExpenseId(expenseId, tx)
+            const updatedExpense = await this.expenseRepo.update(expenseId, updateInput, tx);
+            await this.splitRepo.createMany(
+                {
+                    expenseId,
+                    normalizedSplits
+                },
+                tx
+            );
+
+            await this.balanceService.applyExpense(
+                updatedExpense,
+                normalizedSplits,
+                tx
+            );
+            return updatedExpense;
+        })
+
+
     }
 
 }

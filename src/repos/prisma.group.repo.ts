@@ -1,5 +1,5 @@
 import { prisma } from "../prisma";
-import type { CreateGroupInput, Group, GroupRepository, GroupSummary } from "../types/group";
+import type { CreateGroupInput, GroupRepository, GroupSummary } from "../types/group";
 import type { Group as PrismaGroup } from '../generated/prisma/client'
 import type { Member } from "../types/member";
 import type { Member as PrismaMember } from '../generated/prisma/client'

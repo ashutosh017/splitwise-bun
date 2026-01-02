@@ -48,8 +48,9 @@ export class PrismaExpenseRepository implements ExpenseRepository {
             }
         })
     }
-    async update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
-        const expense = await prisma.expense.update({
+    async update(expenseId: string, updateInput: UpdateExpenseInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary> {
+        const client = tx ?? prisma;
+        const expense = await client.expense.update({
             where: {
                 id: expenseId
             },
@@ -64,7 +65,8 @@ export class PrismaExpenseRepository implements ExpenseRepository {
             whoPaidId: expense.whoPaidId,
             groupId: expense.groupId,
             amount: Number(expense.amount),
-            description: expense.description
+            description: expense.description,
+            splitType: expense.splitType
         }
     }
 }

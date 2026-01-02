@@ -1,29 +1,19 @@
 import type { Prisma } from "../generated/prisma/client";
 import type { SplitType } from "../generated/prisma/enums";
-import type { Group } from "./group";
-import type { Member } from "./member";
-import type { SplitInput } from "./split";
+import type { SplitSummary } from "./split";
 
-export interface Expense {
-    id: string;
-    description?: string;
-    amount: number;
-    group: Group;
-    whoPaid: Member;
-    splitType: SplitType;
-    splits: SplitInput[]
-}
 export interface ExpenseRepository {
     create(input: CreateExpenseRepoInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary>
     findById(expenseId: string): Promise<ExpenseSummary | null>,
     listByGroup(groupId: string): Promise<ExpenseSummary[]>
     delete(expenseId: string, tx?: Prisma.TransactionClient): Promise<void>
-    update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary>
+    update(expenseId: string, updateInput: UpdateExpenseInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary>
 }
 export interface UpdateExpenseInput {
     whoPaidId?: string;
     description?: string | null;
     amount?: number;
+    splitType: SplitType;
 }
 
 export interface ExpenseSummary {
@@ -32,6 +22,7 @@ export interface ExpenseSummary {
     description: string | null;
     amount: number;
     groupId: string;
+    splitType: SplitType;
 }
 export interface CreateExpenseRepoInput {
     splitType: SplitType;
@@ -41,5 +32,5 @@ export interface CreateExpenseRepoInput {
     groupId: string;
 }
 export interface CreateExpenseInput extends CreateExpenseRepoInput {
-    splits: SplitInput[]
+    splits: SplitSummary[]
 }

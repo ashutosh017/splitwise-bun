@@ -1,16 +1,5 @@
 import type { Prisma } from "../generated/prisma/client";
 
-export interface Split {
-    id: string;
-    value: number;
-    expenseId: string;
-    memberId: string;
-}
-
-export interface SplitInput {
-    value: number;
-    memberId: string;
-}
 export interface CreateManySplitInput {
     expenseId: string;
     normalizedSplits: Map<string, number>,

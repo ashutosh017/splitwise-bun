@@ -4,7 +4,7 @@ import { prisma } from "../prisma";
 import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
 import type { CreateExpenseInput, ExpenseSummary } from "../types/expense";
 import type { GroupRepository } from "../types/group";
-import type { SplitInput } from "../types/split";
+import type { SplitSummary } from "../types/split";
 
 export class BalanceService {
     constructor(
@@ -60,7 +60,7 @@ export class BalanceService {
         }
     }
 
-    async reverseExpense(expense: ExpenseSummary, splits: SplitInput[], tx?: Prisma.TransactionClient): Promise<void> {
+    async reverseExpense(expense: ExpenseSummary, splits: SplitSummary[], tx?: Prisma.TransactionClient): Promise<void> {
         const client = tx ?? prisma;
         for (const split of splits) {
             if (split.memberId === expense.whoPaidId) continue;
