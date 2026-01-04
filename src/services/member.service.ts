@@ -1,0 +1,24 @@
+import type { MemberRepository, Member, MemberWithHashedPassword, CreateMemberInput } from "../types/member";
+import { MemberAlreadyExistsError, MemberNotFoundError } from "../errors/errors";
+
+export class MemberService {
+    constructor(
+        private readonly memberRepo: MemberRepository
+    ) { }
+    async create(input: CreateMemberInput): Promise<MemberWithHashedPassword> {
+        const member = await this.findByEmail(input.email)
+        if (member) throw new MemberAlreadyExistsError();
+        return this.memberRepo.create(input)
+    }
+    async findById(memberId: string): Promise<Member> {
+        const member = await this.memberRepo.findById(memberId);
+        if (!member) throw new MemberNotFoundError();
+        return member;
+    }
+    async findByEmail(email: string): Promise<MemberWithHashedPassword> {
+        const member = await this.memberRepo.findByEmail(email);
+        if (!member) throw new MemberNotFoundError();
+        return member;
+    }
+
+}

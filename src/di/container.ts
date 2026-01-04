@@ -7,17 +7,21 @@ import { AuthService } from "../services/auth.service";
 import { BalanceService } from "../services/balance.service";
 import { ExpenseService } from "../services/expense.service";
 import { GroupService } from "../services/group.service";
+import { MemberService } from "../services/member.service";
 
-// repos
+// Repos
 const memberRepo = new PrismaMemberRepository();
 const groupRepo = new PrismaGroupRepository();
 const expenseRepo = new PrismaExpenseRepository();
 const balanceRepo = new PrismaBalanceRepository();
 const splitRepo = new PrismaSplitRepository();
 
-// services
+// Leaf services
 export const authService = new AuthService(memberRepo);
-export const groupService = new GroupService(memberRepo, groupRepo);
+export const memberService = new MemberService(memberRepo);
+
+// Root services
+export const groupService = new GroupService(memberService, groupRepo);
 export const balanceService = new BalanceService(balanceRepo, groupRepo);
 export const expenseService = new ExpenseService(
     expenseRepo, groupService, splitRepo, balanceService

@@ -1,14 +1,16 @@
 import { prisma } from "../prisma";
-import type { SigninData, SignupData } from "../types/auth";
-import type { Member, MemberRepository, MemberWithHashedPassword } from "../types/member";
+import type { CreateMemberInput, Member, MemberRepository, MemberWithHashedPassword } from "../types/member";
 import type { Member as PrismaMember } from '../generated/prisma/client'
 
 export class PrismaMemberRepository implements MemberRepository {
-    async create(data: SignupData): Promise<MemberWithHashedPassword> {
+    async create(data: CreateMemberInput): Promise<MemberWithHashedPassword> {
         const user = await prisma.member.create({
             data
         })
-        return this.toDomain(user);
+        return {
+            ...this.toDomain(user),
+            password: user.password
+        }
     }
     async findByEmail(email: string): Promise<MemberWithHashedPassword | null> {
         const user = await prisma.member.findUnique({
@@ -16,7 +18,10 @@ export class PrismaMemberRepository implements MemberRepository {
                 email
             }
         })
-        return user ? this.toDomain(user) : null
+        return user ? {
+            ...this.toDomain(user),
+            password: user.password
+        } : null
     }
     async findById(id: string): Promise<Member | null> {
         const user = await prisma.member.findUnique({
@@ -29,11 +34,10 @@ export class PrismaMemberRepository implements MemberRepository {
         }
         return this.toDomain(user)
     }
-    private toDomain(member: PrismaMember): MemberWithHashedPassword {
+    private toDomain(member: PrismaMember): Member {
         return {
             id: member.id,
             name: member.name,
-            password: member.password,
             email: member.email
         }
     }

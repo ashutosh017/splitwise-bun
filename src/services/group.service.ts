@@ -1,10 +1,12 @@
 import { GroupNotFoundError, MemberAlreadyInGroupError, MemberNotFoundError, MemberNotInGroupError } from "../errors/errors";
 import type { CreateGroupInput, GroupRepository, GroupSummary } from "../types/group";
-import type { Member, MemberRepository } from "../types/member";
+import type { Member } from "../types/member";
+import type { AuthService } from "./auth.service";
+import type { MemberService } from "./member.service";
 
 export class GroupService {
     constructor(
-        private readonly memberRepo: MemberRepository,
+        private readonly memberService: MemberService,
         private readonly groupRepo: GroupRepository
     ) {
     }
@@ -23,7 +25,7 @@ export class GroupService {
         const [group, member] = await Promise.all(
             [
                 this.groupRepo.findById(groupId),
-                this.memberRepo.findById(memberId)
+                this.memberService.findById(memberId)
             ]
         )
         if (!group) throw new GroupNotFoundError();
@@ -57,7 +59,7 @@ export class GroupService {
         this.groupRepo.delete(groupId);
     }
     async listGroupsForMember(memberId: string): Promise<GroupSummary[]> {
-        const member = await this.memberRepo.findById(memberId);
+        const member = await this.memberService.findById(memberId);
         if (!member) throw new MemberNotFoundError;
         const groups = await this.groupRepo.listGroupsForMember(memberId);
         return groups
