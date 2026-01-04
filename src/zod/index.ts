@@ -4,11 +4,7 @@ import { maxError, minError, stringError } from "./zod_errors";
 
 export const SigninSchema = z.object({
     email: z
-        .string({
-            error: stringError("Email")
-        })
-        .min(1, minError("Email"))
-        .max(200, maxError("Email", 200)),
+        .email({ error: "Invalid email format" }),
 
     password: z
         .string({
@@ -25,6 +21,20 @@ export const SignupSchema = SigninSchema.extend({
         })
         .min(1, minError("Name"))
         .max(100, maxError("Name", 100)),
+    confirmPassword: z
+        .string({
+            error: stringError("Password")
+        })
+        .min(1, minError("Password"))
+        .max(200, maxError("Password", 200))
+}).superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+        ctx.addIssue({
+            code: "custom",
+            message: "The passwords did not match",
+            path: ["confirmPassword"],
+        });
+    }
 });
 
 export const CreateGroupSchema = z.object({

@@ -126,3 +126,8 @@ export class PercentageSplitNotEqualTo100Error extends AppError {
     }
 }
 
+export class PasswordsDoesNotMatchError extends AppError {
+    constructor() {
+        super("PASSWORDS_DOES_NOT_MATCH", 401, "Passwords did not match")
+    }
+}

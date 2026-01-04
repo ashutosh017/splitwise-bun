@@ -3,13 +3,13 @@ import type { Prisma } from "../generated/prisma/client";
 import { prisma } from "../prisma";
 import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
 import type { CreateExpenseInput, ExpenseSummary } from "../types/expense";
-import type { GroupRepository } from "../types/group";
 import type { SplitSummary } from "../types/split";
+import type { GroupService } from "./group.service";
 
 export class BalanceService {
     constructor(
         private readonly balanceRepo: BalanceRepository,
-        private readonly groupRepo: GroupRepository
+        private readonly groupService: GroupService
     ) {
     }
     async createOrUpdate(input: CreateBalanceInput): Promise<BalanceSummary> {
@@ -38,7 +38,7 @@ export class BalanceService {
         await this.balanceRepo.delete(groupId, fromMemberId, toMemberId);
     }
     async listByGroup(groupId: string): Promise<BalanceSummary[]> {
-        const group = await this.groupRepo.findById(groupId);
+        const group = await this.groupService.findById(groupId);
         if (!group) throw new GroupNotFoundError();
         const balances = await this.balanceRepo.listByGroup(groupId);
         return balances;

@@ -1,7 +1,7 @@
-export interface SignupData {
-    name: string;
-    email: string;
-    password: string;
+import type { CreateMemberInput } from "./member";
+
+export interface SignupData extends CreateMemberInput {
+    confirmPassword: string
 }
 export interface SigninData {
     email: string;

@@ -17,12 +17,12 @@ const balanceRepo = new PrismaBalanceRepository();
 const splitRepo = new PrismaSplitRepository();
 
 // Leaf services
-export const authService = new AuthService(memberRepo);
 export const memberService = new MemberService(memberRepo);
 
 // Root services
+export const authService = new AuthService(memberService);
 export const groupService = new GroupService(memberService, groupRepo);
-export const balanceService = new BalanceService(balanceRepo, groupRepo);
+export const balanceService = new BalanceService(balanceRepo, groupService);
 export const expenseService = new ExpenseService(
-    expenseRepo, groupService, splitRepo, balanceService
+    expenseRepo, splitRepo, groupService, balanceService
 )

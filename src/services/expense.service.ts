@@ -8,8 +8,8 @@ import type { GroupService } from "./group.service";
 export class ExpenseService {
     constructor(
         private readonly expenseRepo: ExpenseRepository,
-        private readonly groupService: GroupService,
         private readonly splitRepo: SplitRepository,
+        private readonly groupService: GroupService,
         private readonly balanceService: BalanceService,
 
     ) { }
