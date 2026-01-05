@@ -4,11 +4,12 @@ import type { CreateExpenseInput, ExpenseRepository, ExpenseSummary, UpdateExpen
 import type { SplitRepository, SplitSummary, SplitType } from "../types/split";
 import type { BalanceService } from "./balance.service";
 import type { GroupService } from "./group.service";
+import type { SplitService } from "./split.service";
 
 export class ExpenseService {
     constructor(
         private readonly expenseRepo: ExpenseRepository,
-        private readonly splitRepo: SplitRepository,
+        private readonly splitService: SplitService,
         private readonly groupService: GroupService,
         private readonly balanceService: BalanceService,
 
@@ -23,7 +24,7 @@ export class ExpenseService {
                 whoPaidId: input.whoPaidId,
                 groupId: input.groupId, splitType: input.splitType,
             }, tx)
-            await this.splitRepo.createMany(
+            await this.splitService.createMany(
                 {
                     expenseId: expense.id,
                     normalizedSplits: map,
@@ -130,16 +131,16 @@ export class ExpenseService {
     async delete(expenseId: string): Promise<void> {
         const expense = await this.findById(expenseId);
         return prisma.$transaction(async (tx) => {
-            const splits = await this.splitRepo.findByExpenseId(expenseId, tx);
+            const splits = await this.splitService.findByExpenseId(expenseId, tx);
             await this.balanceService.reverseExpense(expense, splits, tx)
-            await this.splitRepo.deleteByExpenseId(expenseId, tx);
+            await this.splitService.deleteByExpenseId(expenseId, tx);
             await this.expenseRepo.delete(expenseId, tx)
         })
     }
 
     async update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
         const oldExpense = await this.findById(expenseId);
-        const splits = await this.splitRepo.findByExpenseId(expenseId)
+        const splits = await this.splitService.findByExpenseId(expenseId)
         await this.validateExpense({
             ...oldExpense,
             splits
@@ -147,9 +148,9 @@ export class ExpenseService {
         const normalizedSplits = this.normalizeSplits(updateInput.splitType, updateInput.amount!, splits)
         return prisma.$transaction(async (tx) => {
             await this.balanceService.reverseExpense(oldExpense, splits, tx);
-            await this.splitRepo.deleteByExpenseId(expenseId, tx)
+            await this.splitService.deleteByExpenseId(expenseId, tx)
             const updatedExpense = await this.expenseRepo.update(expenseId, updateInput, tx);
-            await this.splitRepo.createMany(
+            await this.splitService.createMany(
                 {
                     expenseId,
                     normalizedSplits

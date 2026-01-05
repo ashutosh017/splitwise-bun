@@ -1,13 +1,12 @@
 import { GroupNotFoundError, MemberAlreadyInGroupError, MemberNotFoundError, MemberNotInGroupError } from "../errors/errors";
 import type { CreateGroupInput, GroupRepository, GroupSummary } from "../types/group";
 import type { Member } from "../types/member";
-import type { AuthService } from "./auth.service";
 import type { MemberService } from "./member.service";
 
 export class GroupService {
     constructor(
+        private readonly groupRepo: GroupRepository,
         private readonly memberService: MemberService,
-        private readonly groupRepo: GroupRepository
     ) {
     }
     async createGroup(input: CreateGroupInput): Promise<GroupSummary> {

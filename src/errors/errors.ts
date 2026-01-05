@@ -131,3 +131,9 @@ export class PasswordsDoesNotMatchError extends AppError {
         super("PASSWORDS_DOES_NOT_MATCH", 401, "Passwords did not match")
     }
 }
+
+export class SplitsNotFoundError extends AppError {
+    constructor() {
+        super("SPLITS_NOT_EXISTS", 404, "Splits does not found for this perticular expense id")
+    }
+}
