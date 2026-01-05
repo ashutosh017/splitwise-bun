@@ -1,3 +1,4 @@
+import { AuthController } from "../controllers/auth.controller";
 import { PrismaBalanceRepository } from "../repos/prisma.balance.repo";
 import { PrismaExpenseRepository } from "../repos/prisma.expense.repo";
 import { PrismaGroupRepository } from "../repos/prisma.group.repo";
@@ -28,3 +29,6 @@ export const balanceService = new BalanceService(balanceRepo, groupService);
 export const expenseService = new ExpenseService(
     expenseRepo, splitService, groupService, balanceService
 )
+
+// Controllers
+export const authController = new AuthController(authService)
