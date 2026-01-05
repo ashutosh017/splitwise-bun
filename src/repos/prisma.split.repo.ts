@@ -1,8 +1,9 @@
 import type { Prisma } from "../generated/prisma/client";
 import type { TransactionClient } from "../generated/prisma/internal/prismaNamespace";
 import { prisma } from "../prisma";
-import type { CreateManySplitInput, SplitRepository, SplitSummary } from "../types/split";
 import type { Split as PrismaSplit } from '../generated/prisma/client'
+import type { CreateManySplitInput, SplitSummary } from "../zod";
+import type { SplitRepository } from "../interfaces";
 
 export class PrismaSplitRepository implements SplitRepository {
     async createMany(input: CreateManySplitInput, tx?: TransactionClient): Promise<void> {

@@ -1,6 +1,8 @@
 import { prisma } from "../prisma";
-import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
+
 import type { Prisma, Balance as PrismaBalance } from '../generated/prisma/client'
+import type { BalanceRepository } from "../interfaces";
+import type { BalanceSummary, CreateBalanceInput } from "../zod";
 
 export class PrismaBalanceRepository implements BalanceRepository {
     async upsert(input: CreateBalanceInput, tx?: Prisma.TransactionClient): Promise<BalanceSummary> {

@@ -1,6 +1,7 @@
 import { prisma } from "../prisma";
-import type { CreateExpenseRepoInput, ExpenseRepository, ExpenseSummary, UpdateExpenseInput } from "../types/expense";
 import type { Prisma, Expense as PrismaExpense } from '../generated/prisma/client'
+import type { ExpenseRepository } from "../interfaces";
+import type { CreateExpenseRepoInput, ExpenseSummary, UpdateExpenseInput } from "../zod";
 
 export class PrismaExpenseRepository implements ExpenseRepository {
     async create(input: CreateExpenseRepoInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary> {
@@ -48,11 +49,11 @@ export class PrismaExpenseRepository implements ExpenseRepository {
             }
         })
     }
-    async update(expenseId: string, updateInput: UpdateExpenseInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary> {
+    async update(updateInput: UpdateExpenseInput, tx?: Prisma.TransactionClient): Promise<ExpenseSummary> {
         const client = tx ?? prisma;
         const expense = await client.expense.update({
             where: {
-                id: expenseId
+                id: updateInput.expenseId
             },
             data: updateInput
         })

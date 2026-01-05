@@ -1,11 +1,10 @@
 import { env } from "../env";
 import jwt from 'jsonwebtoken'
-import type { SigninData, SignupData } from "../types/auth";
 
 import type { MemberService } from "./member.service";
 import { PasswordsDoesNotMatchError } from "../errors/errors";
 import bcrypt from 'bcrypt'
-import type { CreateMemberInput } from "../types/member";
+import type { CreateMemberInput, SigninData, SignupData } from "../zod";
 
 const SALT_ROUNDS = 10;
 export class AuthService {

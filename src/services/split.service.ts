@@ -1,6 +1,7 @@
 import { SplitsNotFoundError } from "../errors/errors";
 import type { Prisma } from "../generated/prisma/client";
-import type { CreateManySplitInput, SplitRepository, SplitSummary } from "../types/split";
+import type { SplitRepository } from "../interfaces";
+import type { CreateManySplitInput, SplitSummary } from "../zod";
 
 export class SplitService {
     constructor(

@@ -1,6 +1,7 @@
 import { prisma } from "../prisma";
-import type { CreateMemberInput, Member, MemberRepository, MemberWithHashedPassword } from "../types/member";
 import type { Member as PrismaMember } from '../generated/prisma/client'
+import type { MemberRepository } from "../interfaces";
+import type { CreateMemberInput, Member, MemberWithHashedPassword } from "../zod";
 
 export class PrismaMemberRepository implements MemberRepository {
     async create(data: CreateMemberInput): Promise<MemberWithHashedPassword> {

@@ -1,6 +1,6 @@
 import { GroupNotFoundError, MemberAlreadyInGroupError, MemberNotFoundError, MemberNotInGroupError } from "../errors/errors";
-import type { CreateGroupInput, GroupRepository, GroupSummary } from "../types/group";
-import type { Member } from "../types/member";
+import type { GroupRepository } from "../interfaces";
+import type { CreateGroupInput, GroupSummary, Member } from "../zod";
 import type { MemberService } from "./member.service";
 
 export class GroupService {

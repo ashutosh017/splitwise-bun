@@ -1,7 +1,7 @@
 import { DuplicateMembersInSplitsArrayError, EmptySplitsArrayError, ExpenseNotFoundError, InvalidAmountError, InvalidSplitValueError, PercentageSplitNotEqualTo100Error, SplitAmountMismatchError } from "../errors/errors";
+import type { ExpenseRepository } from "../interfaces";
 import { prisma } from "../prisma";
-import type { CreateExpenseInput, ExpenseRepository, ExpenseSummary, UpdateExpenseInput } from "../types/expense";
-import type { SplitRepository, SplitSummary, SplitType } from "../types/split";
+import type { CreateExpenseInput, ExpenseSummary, SplitSummary, SplitType, UpdateExpenseInput } from "../zod";
 import type { BalanceService } from "./balance.service";
 import type { GroupService } from "./group.service";
 import type { SplitService } from "./split.service";
@@ -138,18 +138,19 @@ export class ExpenseService {
         })
     }
 
-    async update(expenseId: string, updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
+    async update(updateInput: UpdateExpenseInput): Promise<ExpenseSummary> {
+        const expenseId = updateInput.expenseId;
         const oldExpense = await this.findById(expenseId);
         const splits = await this.splitService.findByExpenseId(expenseId)
         await this.validateExpense({
             ...oldExpense,
             splits
         })
-        const normalizedSplits = this.normalizeSplits(updateInput.splitType, updateInput.amount!, splits)
+        const normalizedSplits = this.normalizeSplits(oldExpense.splitType, updateInput.amount!, splits)
         return prisma.$transaction(async (tx) => {
             await this.balanceService.reverseExpense(oldExpense, splits, tx);
             await this.splitService.deleteByExpenseId(expenseId, tx)
-            const updatedExpense = await this.expenseRepo.update(expenseId, updateInput, tx);
+            const updatedExpense = await this.expenseRepo.update(updateInput, tx);
             await this.splitService.createMany(
                 {
                     expenseId,

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { groupService } from "../di/container";
-import { AddOrRemoveMemberSchema, CreateGroupSchema, Id } from "../zod/";
+import { AddOrRemoveMemberSchema, CreateGroupSchema, deleteGroupSchema } from "../zod/";
 import { AppError } from "../errors/app_error";
 
 export const GroupRouter = Router();
@@ -33,7 +33,7 @@ GroupRouter.post("/", async (req, res) => {
     }
 })
 GroupRouter.delete("/", async (req, res) => {
-    const parsedBody = Id.safeParse(req.body);
+    const parsedBody = deleteGroupSchema.safeParse(req.body);
     if (parsedBody.error) {
         res.status(500).json({
             message: "Error parsing data"
@@ -41,7 +41,7 @@ GroupRouter.delete("/", async (req, res) => {
         return;
     }
     try {
-        await groupService.delete(parsedBody.data)
+        await groupService.delete(parsedBody.data.id)
         res.status(200).json({
             message: "group deleted successfully"
         })

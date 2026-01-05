@@ -1,9 +1,8 @@
 import { BalanceNotFoundError, GroupNotFoundError, InsufficientBalanceError, InvalidAmountError } from "../errors/errors";
 import type { Prisma } from "../generated/prisma/client";
+import type { BalanceRepository } from "../interfaces";
 import { prisma } from "../prisma";
-import type { BalanceRepository, BalanceSummary, CreateBalanceInput } from "../types/balance";
-import type { CreateExpenseInput, ExpenseSummary } from "../types/expense";
-import type { SplitSummary } from "../types/split";
+import type { BalanceSummary, CreateBalanceInput, ExpenseSummary, SplitSummary } from "../zod";
 import type { GroupService } from "./group.service";
 
 export class BalanceService {

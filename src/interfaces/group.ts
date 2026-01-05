@@ -1,4 +1,4 @@
-import type { Member } from "./member";
+import type { CreateGroupInput, GroupSummary, Member } from "../zod";
 
 export interface GroupRepository {
     create(data: CreateGroupInput): Promise<GroupSummary>
@@ -10,13 +10,4 @@ export interface GroupRepository {
     listMembers(groupId: string): Promise<Member[]>
     listGroupsForMember(memberId: string): Promise<GroupSummary[]>
     delete(groupId: string): Promise<void>
-}
-export interface CreateGroupInput {
-    name: string;
-    description: string | null;
-}
-export interface GroupSummary {
-    id: string;
-    name: string;
-    description: string | null;
 }

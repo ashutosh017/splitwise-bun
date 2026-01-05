@@ -1,5 +1,6 @@
-import type { MemberRepository, Member, MemberWithHashedPassword, CreateMemberInput } from "../types/member";
 import { MemberAlreadyExistsError, MemberNotFoundError } from "../errors/errors";
+import type { MemberRepository } from "../interfaces";
+import type { CreateMemberInput, Member, MemberWithHashedPassword } from "../zod";
 
 export class MemberService {
     constructor(
