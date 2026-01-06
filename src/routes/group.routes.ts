@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { groupService } from "../di/container";
-import { AddOrRemoveMemberSchema, CreateGroupSchema, deleteGroupSchema } from "../zod/";
 import { AppError } from "../errors/app_error";
+import { AddOrRemoveMemberSchema, CreateGroupSchema, deleteGroupSchema } from "../zod";
 
 export const GroupRouter = Router();
 
