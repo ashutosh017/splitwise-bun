@@ -119,14 +119,14 @@ export class ExpenseService {
         })
         return Array.from(map.values()).some(count => count > 1);
     }
-    async findById(expenseId: string): Promise<ExpenseSummary> {
-        const expense = await this.expenseRepo.findById(expenseId);
-        if (!expense) throw new ExpenseNotFoundError()
-        return expense;
-    }
     async listByGroup(groupId: string): Promise<ExpenseSummary[]> {
         const expenses = await this.expenseRepo.listByGroup(groupId);
         return expenses;
+    }
+    async findById(expenseId: string): Promise<ExpenseSummary> {
+        const expenses = await this.expenseRepo.findById(expenseId)
+        if (!expenses) throw new ExpenseNotFoundError();
+        return expenses
     }
     async delete(expenseId: string): Promise<void> {
         const expense = await this.findById(expenseId);
