@@ -21,6 +21,16 @@ export class BalanceService {
         if (!balance) throw new BalanceNotFoundError()
         return balance;
     }
+    async listByGroup(groupId: string): Promise<BalanceSummary[]> {
+        const group = await this.groupService.findById(groupId);
+        if (!group) throw new GroupNotFoundError();
+        const balances = await this.balanceRepo.listByGroup(groupId);
+        return balances;
+    }
+    async delete(groupId: string, fromMemberId: string, toMemberId: string): Promise<void> {
+        await this.find(groupId, fromMemberId, toMemberId);
+        await this.balanceRepo.delete(groupId, fromMemberId, toMemberId);
+    }
     async decrement(groupId: string, fromMemberId: string, toMemberId: string, amount: number): Promise<BalanceSummary> {
         if (amount <= 0) throw new InvalidAmountError();
         const balance = await this.find(groupId, fromMemberId, toMemberId);
@@ -31,19 +41,6 @@ export class BalanceService {
         return this.createOrUpdate({
             groupId, fromMemberId, toMemberId, amount
         });
-    }
-    async delete(groupId: string, fromMemberId: string, toMemberId: string): Promise<void> {
-        await this.find(groupId, fromMemberId, toMemberId);
-        await this.balanceRepo.delete(groupId, fromMemberId, toMemberId);
-    }
-    async listByGroup(groupId: string): Promise<BalanceSummary[]> {
-        const group = await this.groupService.findById(groupId);
-        if (!group) throw new GroupNotFoundError();
-        const balances = await this.balanceRepo.listByGroup(groupId);
-        return balances;
-    }
-    async settleUp() {
-
     }
     async applyExpense(expense: ExpenseSummary, normalizedSplits: Map<string, number>, tx?: Prisma.TransactionClient): Promise<void> {
         const client = tx ?? prisma;
@@ -58,12 +55,11 @@ export class BalanceService {
             }, client)
         }
     }
-
     async reverseExpense(expense: ExpenseSummary, splits: SplitSummary[], tx?: Prisma.TransactionClient): Promise<void> {
         const client = tx ?? prisma;
         for (const split of splits) {
             if (split.memberId === expense.whoPaidId) continue;
-            await this.balanceRepo.decrement(expense.groupId, split.memberId, expense.whoPaidId, split.value, tx)
+            await this.balanceRepo.decrement(expense.groupId, split.memberId, expense.whoPaidId, split.value, client)
         }
     }
 

@@ -124,9 +124,9 @@ export class ExpenseService {
         return expenses;
     }
     async findById(expenseId: string): Promise<ExpenseSummary> {
-        const expenses = await this.expenseRepo.findById(expenseId)
-        if (!expenses) throw new ExpenseNotFoundError();
-        return expenses
+        const expense = await this.expenseRepo.findById(expenseId)
+        if (!expense) throw new ExpenseNotFoundError();
+        return expense
     }
     async delete(expenseId: string): Promise<void> {
         const expense = await this.findById(expenseId);

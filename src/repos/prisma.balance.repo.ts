@@ -6,7 +6,8 @@ import type { BalanceSummary, CreateBalanceInput } from "../zod";
 
 export class PrismaBalanceRepository implements BalanceRepository {
     async upsert(input: CreateBalanceInput, tx?: Prisma.TransactionClient): Promise<BalanceSummary> {
-        const balance = await prisma.balance.upsert({
+        const client = tx ?? prisma;
+        const balance = await client.balance.upsert({
             where: {
                 groupId_fromMemberId_toMemberId: {
                     groupId: input.groupId,

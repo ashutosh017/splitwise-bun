@@ -1,4 +1,9 @@
 import { AuthController } from "../controllers/auth.controller";
+import { BalanceController } from "../controllers/balance.controller";
+import { ExpenseController } from "../controllers/expense.controller";
+import { GroupController } from "../controllers/group.controller";
+import { MemberController } from "../controllers/member.controller";
+import { SplitController } from "../controllers/split.controller";
 import { PrismaBalanceRepository } from "../repos/prisma.balance.repo";
 import { PrismaExpenseRepository } from "../repos/prisma.expense.repo";
 import { PrismaGroupRepository } from "../repos/prisma.group.repo";
@@ -26,9 +31,12 @@ export const splitService = new SplitService(splitRepo);
 export const authService = new AuthService(memberService);
 export const groupService = new GroupService(groupRepo, memberService);
 export const balanceService = new BalanceService(balanceRepo, groupService);
-export const expenseService = new ExpenseService(
-    expenseRepo, splitService, groupService, balanceService
-)
+export const expenseService = new ExpenseService(expenseRepo, splitService, groupService, balanceService)
 
 // Controllers
 export const authController = new AuthController(authService)
+export const balanceController = new BalanceController(balanceService)
+export const expenseController = new ExpenseController(expenseService)
+export const groupController = new GroupController(groupService)
+export const memberController = new MemberController(memberService)
+export const splitController = new SplitController(splitService)
