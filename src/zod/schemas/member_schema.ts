@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { type TypeOf } from "zod";
 
 export const MemberSchema = z.object({
     id: z.uuid(),
@@ -13,7 +13,15 @@ export const MemberWithHashedPasswordSchema = MemberSchema.extend({
 export const CreateMemberInputSchema = MemberWithHashedPasswordSchema.omit({
     id: true
 })
+export const MemberIdInputSchema = z.object({
+    memberId: z.uuid()
+})
+export const EmailInputSchema = z.object({
+    email: z.email()
+})
 
+export type EmailInput = z.infer<typeof EmailInputSchema>
+export type MemberIdInput = z.infer<typeof MemberIdInputSchema>
 export type Member = z.infer<typeof MemberSchema>
 export type MemberWithHashedPassword = z.infer<typeof MemberWithHashedPasswordSchema>
 export type CreateMemberInput = z.infer<typeof CreateMemberInputSchema>

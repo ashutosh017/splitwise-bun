@@ -19,7 +19,16 @@ export const GroupSummarySchema = z.object({
     name: z.string().min(1).max(100),
     description: z.string().min(1).max(1000)
 })
+export const GroupIdInputSchema = z.object({
+    groupId: z.uuid()
+})
+export const QueryMemberInputSchema = z.object({
+    groupId: z.uuid(),
+    memberId: z.uuid()
+})
 
+export type QueryMemberInput = z.infer<typeof QueryMemberInputSchema>
+export type GroupIdInput = z.infer<typeof GroupIdInputSchema>
 export type CreateGroupInput = z.infer<typeof CreateGroupSchema>
 export type GroupSummary = z.infer<typeof GroupSummarySchema>
 export type AddOrRemoveMemberInput = z.infer<typeof AddOrRemoveMemberSchema>

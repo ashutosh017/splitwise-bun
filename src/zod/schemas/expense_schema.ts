@@ -30,6 +30,11 @@ export const CreateExpenseInputSchema = CreateExpenseRepoInputSchema.extend({
         .array().min(1)
 })
 
+export const ExpenseIdInputSchema = z.object({
+    expenseId: z.uuid()
+})
+
+export type ExpenseIdInput = z.infer<typeof ExpenseIdInputSchema>
 export type UpdateExpenseInput = z.infer<typeof UpdateExpenseInputSchema>
 export type ExpenseSummary = z.infer<typeof ExpenseSummarySchema>
 export type CreateExpenseRepoInput = z.infer<typeof CreateExpenseRepoInputSchema>

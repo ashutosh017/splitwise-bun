@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { catchAsync } from "../utils/catch_async";
-import type { CreateExpenseInput, ExpenseSummary, UpdateExpenseInput } from "../zod";
+import type { CreateExpenseInput, ExpenseIdInput, ExpenseSummary, UpdateExpenseInput } from "../zod";
 import type { ApiResponse } from "../interfaces/api_response";
 import type { ExpenseService } from "../services/expense.service";
 
@@ -8,7 +8,7 @@ export class ExpenseController {
     constructor(
         private expenseService: ExpenseService
     ) { }
-    get = catchAsync(async (req: Request<{ expenseId: string }>, res: Response<ApiResponse<ExpenseSummary>>) => {
+    get = catchAsync(async (req: Request<ExpenseIdInput>, res: Response<ApiResponse<ExpenseSummary>>) => {
         const expenseId = req.params.expenseId;
         const expense = await this.expenseService.findById(expenseId)
         res.status(200).json({
@@ -22,7 +22,7 @@ export class ExpenseController {
             data
         })
     })
-    delete = catchAsync(async (req: Request<{ expenseId: string }>, res: Response<ApiResponse<void>>) => {
+    delete = catchAsync(async (req: Request<ExpenseIdInput>, res: Response<ApiResponse<void>>) => {
         const expenseId = req.params.expenseId
         await this.expenseService.delete(expenseId);
         res.status(200).json({
