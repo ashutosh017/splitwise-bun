@@ -1,13 +1,25 @@
 import type { NextFunction, Request, Response } from "express";
 import type { ZodObject } from "zod";
 
-export const validate = (schema: ZodObject) => async (req: Request, res: Response, next: NextFunction) => {
-    const parsedBody = schema.safeParse(req.body)
-    if (parsedBody.error) {
-        res.status(400).json({
-            message: "Zod validation failed"
-        })
-        return;
+interface ValidationSchema {
+    params?: ZodObject,
+    body?: ZodObject,
+    query?: ZodObject
+}
+
+export const validate = (schema: ValidationSchema) => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (schema.params) {
+            req.params = await schema.params.parseAsync(req.params) as Record<string, string>
+        }
+        if (schema.body) {
+            req.body = await schema.body.parseAsync(req.body)
+        }
+        if (schema.query) {
+            req.query = await schema.query.parseAsync(req.query) as Record<string, string>
+        }
+        next();
+    } catch (error) {
+        next(error);
     }
-    next();
 }

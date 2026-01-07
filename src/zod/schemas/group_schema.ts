@@ -22,12 +22,7 @@ export const GroupSummarySchema = z.object({
 export const GroupIdInputSchema = z.object({
     groupId: z.uuid()
 })
-export const QueryMemberInputSchema = z.object({
-    groupId: z.uuid(),
-    memberId: z.uuid()
-})
 
-export type QueryMemberInput = z.infer<typeof QueryMemberInputSchema>
 export type GroupIdInput = z.infer<typeof GroupIdInputSchema>
 export type CreateGroupInput = z.infer<typeof CreateGroupSchema>
 export type GroupSummary = z.infer<typeof GroupSummarySchema>

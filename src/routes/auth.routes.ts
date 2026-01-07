@@ -5,7 +5,11 @@ import { SigninSchema, SignupSchema } from "../zod";
 
 export const AuthRouter = Router();
 
-AuthRouter.post("/signup", validate(SignupSchema), authController.signup)
+AuthRouter.post("/signup", validate({
+    body: SignupSchema
+}), authController.signup)
 
-AuthRouter.post("/signin", validate(SigninSchema), authController.signin)
+AuthRouter.post("/signin", validate({
+    body: SigninSchema
+}), authController.signin)
 

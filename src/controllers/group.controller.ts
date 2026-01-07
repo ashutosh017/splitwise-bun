@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { catchAsync } from "../utils/catch_async";
 import type { GroupService } from "../services/group.service";
 import type { ApiResponse } from "../interfaces/api_response";
-import type { CreateGroupInput, GroupIdInput, GroupSummary, Member, MemberIdInput, QueryMemberInput } from "../zod";
+import type { CreateGroupInput, GroupIdInput, GroupSummary, Member, MemberIdInput, QueryMemberInput, } from "../zod";
 
 export class GroupController {
     constructor(

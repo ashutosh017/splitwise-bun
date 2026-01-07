@@ -19,7 +19,12 @@ export const MemberIdInputSchema = z.object({
 export const EmailInputSchema = z.object({
     email: z.email()
 })
+export const QueryMemberInputSchema = z.object({
+    memberId: z.uuid(),
+    groupId: z.uuid()
+})
 
+export type QueryMemberInput = z.infer<typeof QueryMemberInputSchema>
 export type EmailInput = z.infer<typeof EmailInputSchema>
 export type MemberIdInput = z.infer<typeof MemberIdInputSchema>
 export type Member = z.infer<typeof MemberSchema>

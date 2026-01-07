@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { catchAsync } from "../utils/catch_async";
-import type { CreateExpenseInput, ExpenseIdInput, ExpenseSummary, UpdateExpenseInput } from "../zod";
+import type { CreateExpenseInput, ExpenseIdInput, ExpenseSummary, GroupIdInput, UpdateExpenseInput } from "../zod";
 import type { ApiResponse } from "../interfaces/api_response";
 import type { ExpenseService } from "../services/expense.service";
 
@@ -35,8 +35,8 @@ export class ExpenseController {
             success: true, data
         })
     })
-    listByGroup = catchAsync(async (req: Request<{}, {}, {}, { groupId: string }>, res: Response<ApiResponse<ExpenseSummary[]>>) => {
-        const groupId = req.query.groupId;
+    listByGroup = catchAsync(async (req: Request<GroupIdInput>, res: Response<ApiResponse<ExpenseSummary[]>>) => {
+        const groupId = req.params.groupId;
         const expenses = await this.expenseService.listByGroup(groupId)
         res.status(200).json({
             success: true,
