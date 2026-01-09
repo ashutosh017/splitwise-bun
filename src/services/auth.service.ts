@@ -6,12 +6,12 @@ import { PasswordsDoesNotMatchError } from "../errors/errors";
 import bcrypt from 'bcrypt'
 import type { CreateMemberInput, SigninData, SignupData } from "../zod";
 
-const SALT_ROUNDS = 10;
 export class AuthService {
+    private SALT_ROUNDS = 10;
     constructor(private memberService: MemberService) { }
     async signup(data: SignupData): Promise<void> {
         if (data.password !== data.confirmPassword) throw new PasswordsDoesNotMatchError()
-        const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS)
+        const hashedPassword = await bcrypt.hash(data.password, this.SALT_ROUNDS)
         const createInput: CreateMemberInput = {
             name: data.name,
             email: data.email,
