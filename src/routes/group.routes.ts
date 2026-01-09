@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validate } from "../middlewares/validate.middleware";
-import { CreateGroupSchema, GroupIdInputSchema, MemberIdInputSchema, QueryMemberInputSchema } from "../zod";
+import { CreateGroupSchema, GroupIdInputSchema, QueryMemberInputSchema } from "../zod";
 import { groupController } from "../di/container";
 
 export const GroupRouter = Router();

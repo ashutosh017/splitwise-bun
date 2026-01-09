@@ -21,7 +21,7 @@ export class SplitController {
             success: true,
         })
     })
-    createMany = catchAsync(async (req: Request<CreateManySplitInput>, res: Response<ApiResponse<void>>) => {
+    createMany = catchAsync(async (req: Request<{},{},CreateManySplitInput>, res: Response<ApiResponse<void>>) => {
         await this.splitService.createMany(req.body)
         res.status(200).json({
             success: true,

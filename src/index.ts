@@ -1,6 +1,6 @@
 import { app } from './server';
 
-const port = 3000;
+const port = 3001;
 
 function main() {
     app.listen(port, () => {
