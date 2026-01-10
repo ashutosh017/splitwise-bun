@@ -2,7 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import type { AuthService } from "../services/auth.service";
 import { catchAsync } from "../utils/catch_async";
 import type { ApiResponse } from "../interfaces/api_response";
-import type { SigninData, SignupData } from "../zod";
+import type { SigninData, SignupData, TokenInput, TokenSummary } from "../zod";
+import jwt from 'jsonwebtoken'
+import { env } from "../env";
 
 export class AuthController {
     constructor(
@@ -28,6 +30,17 @@ export class AuthController {
                 data: {
                     token
                 }
+            })
+        }
+    )
+
+    verfiyToken = catchAsync(
+        async (req: Request<{}, {}, TokenInput>, res: Response<ApiResponse<TokenSummary>>) => {
+            const token = req.body as TokenInput
+            const verify = await this.authService.verifyToken(token)
+            res.status(200).json({
+                success: true,
+                data: verify
             })
         }
     )

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authController } from "../di/container";
 import { validate } from "../middlewares/validate.middleware";
-import { SigninSchema, SignupSchema } from "../zod";
+import { SigninSchema, SignupSchema, TokenSummarySchema } from "../zod";
 
 export const AuthRouter = Router();
 
@@ -12,4 +12,8 @@ AuthRouter.post("/signup", validate({
 AuthRouter.post("/signin", validate({
     body: SigninSchema
 }), authController.signin)
+
+AuthRouter.post('/verify-token', validate({
+    body: TokenSummarySchema
+}), authController.verfiyToken)
 

@@ -23,5 +23,18 @@ export const SignupSchema = SigninSchema.extend({
     }
 });
 
+export const verifyTokenSchema = z.object(
+    {
+        token: z.string().min(1).max(100)
+    }
+)
+
+export const TokenSummarySchema = z.object({
+    id: z.uuid(),
+    email: z.email()
+})
+
+export type TokenSummary = z.infer<typeof TokenSummarySchema>
+export type TokenInput = z.infer<typeof verifyTokenSchema>
 export type SignupData = z.infer<typeof SignupSchema>
 export type SigninData = z.infer<typeof SigninSchema>
